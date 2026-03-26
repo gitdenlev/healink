@@ -27,6 +27,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
       database: process.env.DB_NAME ?? 'healink',
       entities: [Admin, Doctor, Patient, Appointment],
       synchronize: process.env.NODE_ENV !== 'production',
+      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
       logging: false,
     }),
     TypeOrmModule.forFeature([Admin]),

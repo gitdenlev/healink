@@ -1,4 +1,9 @@
 import 'reflect-metadata';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+dotenv.config({ path: path.join(__dirname, '../../.env') });
+
 import { DataSource } from 'typeorm';
 import { faker } from '@faker-js/faker';
 
@@ -304,6 +309,7 @@ const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   entities: [Admin, Patient, Doctor, Appointment],
   synchronize: false,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   logging: false,
 });
 
