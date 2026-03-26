@@ -1,0 +1,36 @@
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.imageSection {
+  position: relative;
+  flex: 0 0 45%;
+  height: 100vh;
+  overflow: hidden;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .imageSection {
+    display: none;
+  }
+  .formSection {
+    flex: 0 0 100% !important;
+  }
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 3%;
+  left: 3%;
+  padding: rem(60);
+  background: transparent;
+}
+
+.formSection {
+  flex: 0 0 50%;
+}
+
+

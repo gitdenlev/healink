@@ -1,0 +1,60 @@
+.avatar {
+  border: none;
+  box-shadow: none;
+}
+
+.name {
+  color: var(--mantine-color-dark-8);
+}
+
+.mutedLabel {
+  color: var(--mantine-color-gray-6);
+  font-weight: 500;
+}
+
+.valueText {
+  color: var(--mantine-color-dark-7);
+  font-weight: 600;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.rowLabel {
+  color: var(--mantine-color-gray-6);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rowDots {
+  flex: 1;
+  border-bottom: 1px dotted var(--mantine-color-gray-4);
+  min-width: 16px;
+  transform: translateY(-1px);
+}
+
+.rowValue {
+  color: var(--mantine-color-dark-8);
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.rowValueGroup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.sectionIcon {
+  color: var(--mantine-color-teal-7);
+  flex-shrink: 0;
+}
+
+:global(.mantine-Modal-content) {
+  overflow: visible !important;
+}

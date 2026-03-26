@@ -1,0 +1,100 @@
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+
+  & thead {
+    background-color: #f8fafb;
+  }
+
+  & thead tr th {
+    color: var(--mantine-color-dark-8);
+    font-weight: 700;
+    font-size: rem(14px);
+    border-bottom: rem(2px) solid var(--mantine-color-teal-6);
+    padding-bottom: var(--mantine-spacing-md);
+    padding-top: var(--mantine-spacing-md);
+    white-space: nowrap;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  & tbody tr td {
+    border-bottom: rem(1px) solid var(--mantine-color-gray-2);
+    vertical-align: middle;
+    padding-top: rem(16px);
+    padding-bottom: rem(16px);
+    font-size: rem(15px);
+    color: var(--mantine-color-dark-8);
+  }
+
+  & tbody tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.row {
+  transition: background-color 100ms ease;
+
+  &:hover td {
+    background-color: var(--mantine-color-teal-0);
+  }
+}
+
+.footer {
+  border-top: rem(1px) solid var(--mantine-color-gray-2);
+}
+
+.searchInput {
+  background-color: white;
+  border-color: #dee2e6;
+  border-radius: rem(8px);
+  height: rem(42px);
+  font-size: rem(14px);
+  transition: all 150ms ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+  &:focus {
+    border-color: var(--mantine-color-teal-6);
+    box-shadow: 0 0 0 3px rgba(18, 184, 134, 0.15);
+  }
+
+  &:hover {
+    border-color: var(--mantine-color-teal-3);
+  }
+}
+
+.filterSelectInput {
+  background-color: white;
+  border: rem(1px) solid #1c8f84;
+  border-radius: rem(6px);
+  height: rem(40px);
+  font-size: rem(14px);
+  color: var(--mantine-color-gray-6);
+  box-shadow: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+
+  &:focus,
+  &:focus-within {
+    border-color: #1c8f84;
+    box-shadow: none;
+  }
+
+  &:hover {
+    border-color: #1c8f84;
+  }
+}
+
+.filterSelectDropdown {
+  border-radius: rem(6px);
+  border: rem(1px) solid var(--mantine-color-gray-3);
+  box-shadow: none;
+  padding: rem(6px) 0;
+}
+
+.filterSelectOption {
+  font-size: rem(14px);
+  line-height: 1.25;
+  color: var(--mantine-color-dark-8);
+  padding: rem(10px) rem(14px);
+  border-radius: 0;
+}

@@ -1,0 +1,215 @@
+name: healink
+
+# Networks
+networks:
+  healink-net:
+    driver: bridge
+
+# Volumes
+volumes:
+  postgres-data:
+
+# Services
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: healink-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB:       ${POSTGRES_DB:-healink}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-healink}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - healink-net
+
+  patients-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev-deps
+    container_name: healink-patients
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST:  postgres
+      DB_PORT:  5432
+      DB_USER:  ${POSTGRES_USER:-postgres}
+      DB_PASS:  ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME:  ${POSTGRES_DB:-healink}
+      TCP_HOST: 0.0.0.0
+      TCP_PORT: 3001
+    expose:
+      - "3001"
+    volumes:
+      - ./server:/app:delegated
+      - /app/node_modules
+    command: npm run start:patients
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - healink-net
+
+  doctors-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev-deps
+    container_name: healink-doctors
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST:  postgres
+      DB_PORT:  5432
+      DB_USER:  ${POSTGRES_USER:-postgres}
+      DB_PASS:  ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME:  ${POSTGRES_DB:-healink}
+      TCP_HOST: 0.0.0.0
+      TCP_PORT: 3002
+    expose:
+      - "3002"
+    volumes:
+      - ./server:/app:delegated
+      - /app/node_modules
+    command: npm run start:doctors
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - healink-net
+
+  appointments-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev-deps
+    container_name: healink-appointments
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST:  postgres
+      DB_PORT:  5432
+      DB_USER:  ${POSTGRES_USER:-postgres}
+      DB_PASS:  ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME:  ${POSTGRES_DB:-healink}
+      TCP_HOST: 0.0.0.0
+      TCP_PORT: 3003
+    expose:
+      - "3003"
+    volumes:
+      - ./server:/app:delegated
+      - /app/node_modules
+    command: npm run start:appointments
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - healink-net
+
+  analytics-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev-deps
+    container_name: healink-analytics
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST:  postgres
+      DB_PORT:  5432
+      DB_USER:  ${POSTGRES_USER:-postgres}
+      DB_PASS:  ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME:  ${POSTGRES_DB:-healink}
+      TCP_HOST: 0.0.0.0
+      TCP_PORT: 3004
+    expose:
+      - "3004"
+    volumes:
+      - ./server:/app:delegated
+      - /app/node_modules
+    command: npm run start:analytics
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - healink-net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: runner
+      args:
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+        NEXT_PUBLIC_GA_TRACKING_ID: ${NEXT_PUBLIC_GA_TRACKING_ID}
+    container_name: healink-client
+    restart: unless-stopped
+    environment:
+      NODE_ENV:                production
+      NEXT_TELEMETRY_DISABLED: 1
+      HOSTNAME:                "0.0.0.0"
+      PORT:                    3000
+      PATIENTS_SERVICE_HOST:     patients-service
+      DOCTORS_SERVICE_HOST:      doctors-service
+      APPOINTMENTS_SERVICE_HOST: appointments-service
+      ANALYTICS_SERVICE_HOST:    analytics-service
+    ports:
+      - "3010:3000"
+    depends_on:
+      - patients-service
+      - doctors-service
+      - appointments-service
+      - analytics-service
+    networks:
+      - healink-net
+
+  adminer:
+    image: adminer:latest
+    container_name: healink-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER:  postgres
+      ADMINER_DESIGN:          dracula
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - healink-net
+
+  seed:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: dev-deps          
+    container_name: healink-seed
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASS: ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME: ${POSTGRES_DB:-healink}
+    volumes:
+      - ./server/src:/app/src:ro
+      - ./server/tsconfig.json:/app/tsconfig.json:ro
+    command: >
+      sh -c "npx ts-node -r tsconfig-paths/register src/seed.ts"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - healink-net
+    profiles:
+      - seed
