@@ -7,19 +7,19 @@ export type ServiceName = 'patients' | 'doctors' | 'appointments' | 'analytics';
 const SERVICE_MAP: Record<ServiceName, { host: string; port: number }> = {
   patients: {
     host: process.env.PATIENTS_SERVICE_HOST || '127.0.0.1',
-    port: 3001,
+    port: parseInt(process.env.PATIENTS_SERVICE_PORT || '3001', 10),
   },
   doctors: {
     host: process.env.DOCTORS_SERVICE_HOST || '127.0.0.1',
-    port: 3002,
+    port: parseInt(process.env.DOCTORS_SERVICE_PORT || '3002', 10),
   },
   appointments: {
     host: process.env.APPOINTMENTS_SERVICE_HOST || '127.0.0.1',
-    port: 3003,
+    port: parseInt(process.env.APPOINTMENTS_SERVICE_PORT || '3003', 10),
   },
   analytics: {
     host: process.env.ANALYTICS_SERVICE_HOST || '127.0.0.1',
-    port: 3004,
+    port: parseInt(process.env.ANALYTICS_SERVICE_PORT || '3004', 10),
   },
 };
 
