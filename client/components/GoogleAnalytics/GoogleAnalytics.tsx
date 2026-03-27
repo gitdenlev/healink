@@ -12,7 +12,8 @@ export function GoogleAnalytics() {
 
   useEffect(() => {
     if (!GA_TRACKING_ID) return;
-    const url = pathname + searchParams.toString();
+    const searchString = searchParams.toString();
+    const url = pathname + (searchString ? `?${searchString}` : "");
     pageview(url);
   }, [pathname, searchParams]);
 

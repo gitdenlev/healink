@@ -25,6 +25,7 @@ export const event = ({
   [key: string]: any;
 }) => {
   if (typeof window !== "undefined" && window.gtag) {
+    console.log("📊 GA Event Triggered:", action, { category, label, ...rest });
     window.gtag("event", action, {
       event_category: category,
       event_label: label,
