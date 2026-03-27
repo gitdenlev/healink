@@ -9,13 +9,13 @@ import Script from "next/script";
 export function GoogleAnalytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchString = searchParams.toString();
 
   useEffect(() => {
     if (!GA_TRACKING_ID) return;
-    const searchString = searchParams.toString();
     const url = pathname + (searchString ? `?${searchString}` : "");
     pageview(url);
-  }, [pathname, searchParams]);
+  }, [pathname, searchString]);
 
   if (!GA_TRACKING_ID) return null;
 
@@ -28,10 +28,11 @@ export function GoogleAnalytics() {
       <Script id="google-analytics" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+          window.gtag = window.gtag || function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${GA_TRACKING_ID}', {
             page_path: window.location.pathname,
+            send_page_view: false,
           });
         `}
       </Script>
