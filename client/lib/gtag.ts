@@ -1,6 +1,11 @@
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID ?? "";
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "";
 
+type StoredAnalyticsUser = {
+  id?: string;
+  role?: string;
+};
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -32,6 +37,29 @@ const normalizeEventName = (name: string) => {
 
   if (!normalized) return "custom_event";
   return /^[a-z]/.test(normalized) ? normalized : `event_${normalized}`;
+};
+
+const readStoredUser = (): StoredAnalyticsUser | null => {
+  if (!isBrowser()) return null;
+
+  const raw = window.localStorage.getItem("healink_user");
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw) as StoredAnalyticsUser;
+  } catch {
+    return null;
+  }
+};
+
+const getActorContext = () => {
+  const storedUser = readStoredUser();
+  if (!storedUser) return {};
+
+  return {
+    user_role: storedUser.role,
+    actor_id: storedUser.id,
+  };
 };
 
 const getGtag = () => {
@@ -84,6 +112,7 @@ export const event = ({
     event_category: category,
     event_label: label,
     value,
+    ...getActorContext(),
     ...rest,
   };
 

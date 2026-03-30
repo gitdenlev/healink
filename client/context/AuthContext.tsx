@@ -91,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       action: 'login_success',
       category: 'Auth',
       user_role: data.user.role,
+      actor_id: data.user.id,
     });
     setToken(data.access_token);
     localStorage.setItem('healink_user', JSON.stringify(data.user));
@@ -115,6 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       action: 'login_success',
       category: 'Auth',
       user_role: data.user.role,
+      actor_id: data.user.id,
     });
     setToken(data.access_token);
     localStorage.setItem('healink_user', JSON.stringify(data.user));
@@ -133,6 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       action: 'logout',
       category: 'Auth',
       user_role: user?.role,
+      actor_id: user?.id,
     });
 
     router.push('/login');
