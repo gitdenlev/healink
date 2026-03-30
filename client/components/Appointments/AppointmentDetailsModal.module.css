@@ -61,7 +61,3 @@
   padding: 10px 12px;
   background-color: white;
 }
-
-:global(.mantine-Modal-content) {
-  overflow: visible !important;
-}

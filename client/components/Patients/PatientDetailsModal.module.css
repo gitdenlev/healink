@@ -55,7 +55,3 @@
   color: var(--mantine-color-teal-7);
   flex-shrink: 0;
 }
-
-:global(.mantine-Modal-content) {
-  overflow: visible !important;
-}
